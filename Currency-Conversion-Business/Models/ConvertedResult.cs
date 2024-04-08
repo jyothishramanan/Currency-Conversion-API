@@ -9,14 +9,12 @@ namespace Currency_Conversion_Business.Models
     public class ConvertedResult
     {
         public double Value { get; set; }   
-        public int Status { get; set; }
-
-        public Status ConversionStatus { get; set; }
+        public ConversionStatus Status { get; set; }
     }
-    public enum Status
+    public enum ConversionStatus
     {
-        UnableToFind,
-        Invalid,
-        High
+        UnableToFind=-2,
+        Invalid=-1,
+        Success=1
     }
 }

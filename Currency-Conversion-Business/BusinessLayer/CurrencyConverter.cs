@@ -48,19 +48,19 @@ namespace Currency_Conversion_Business.BusinessLayer
             try
             {
                  convertedAmount = Convert(amount, fromCurrency, toCurrency);
-                 convertedResult.Status = 1;
+                 convertedResult.Status = ConversionStatus.Success;
                  convertedResult.Value = convertedAmount;
             }
             catch (ArgumentException ex)
             {
                 if (ex.Message == AppConstant.INVALIDCURRENCY_MSG)
                 {
-                    convertedResult.Status = -1;
+                    convertedResult.Status = ConversionStatus.Invalid;
                     convertedResult.Value = 0;
                 }
                 else if (ex.Message == AppConstant.UNABLETOFINDCURRENCY_MSG)
                 {
-                    convertedResult.Status = -2;
+                    convertedResult.Status = ConversionStatus.UnableToFind;
                     convertedResult.Value = 0;
                 }
 

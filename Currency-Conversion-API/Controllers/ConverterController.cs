@@ -5,6 +5,7 @@ using Currency_Conversion_API.ViewModel;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
+using Currency_Conversion_Business.Constants;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -62,7 +63,7 @@ namespace Currency_Conversion_API.Controllers
 
             var convertedResult= currencyConverter.DoConversion(currencyModel);
             var value=convertedResult.Value;
-            if (convertedResult.Status == -1)
+            if (convertedResult.Status == ConversionStatus.Invalid)
             {
                 _logger.LogInformation("Post method invocked: Invalid Currency");
 
@@ -70,11 +71,11 @@ namespace Currency_Conversion_API.Controllers
                 {
                     isSuccess = false,
                     Result = -1,
-                    message = "Invalid Currency",
+                    message = AppConstant.INVALIDCURRENCY_MSG,
                     histories = null
                 });
             }
-            if (convertedResult.Status == -2)
+            if (convertedResult.Status == ConversionStatus.UnableToFind)
             {
                 _logger.LogInformation("Post method invocked: Unable to Fetch Currency");
 
@@ -82,7 +83,7 @@ namespace Currency_Conversion_API.Controllers
                 {
                     isSuccess = false,
                     Result = -1,
-                    message = "Unable to Fetch Currency",
+                    message = AppConstant.UNABLETOFINDCURRENCY_MSG,
                     histories = null
                 });
             }
