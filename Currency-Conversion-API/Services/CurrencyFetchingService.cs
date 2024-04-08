@@ -1,4 +1,5 @@
-﻿using Currency_Conversion_Business.BusinessLayer;
+﻿using Currency_Conversion_API.Controllers;
+using Currency_Conversion_Business.BusinessLayer;
 using System.Net;
 using System.Xml;
 using System.Xml.Linq;
@@ -10,6 +11,8 @@ namespace Currency_Conversion_API.Services
     {
         private Timer _timer;
         IConfiguration _configuration;
+        private readonly ILogger<CurrencyFetchingService> _logger;
+
         public CurrencyFetchingService(IConfiguration configuration) 
         {
             _configuration = configuration;
@@ -52,7 +55,7 @@ namespace Currency_Conversion_API.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error downloading XML file: {ex.Message}");
+                    _logger.LogInformation($"Error downloading XML file: {ex.Message}");
                 }
             }
         }

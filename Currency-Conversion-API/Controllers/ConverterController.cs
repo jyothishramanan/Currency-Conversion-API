@@ -62,7 +62,10 @@ namespace Currency_Conversion_API.Controllers
 
             var convertedResult= currencyConverter.DoConversion(currencyModel);
             var value=convertedResult.Value;
-            if(convertedResult.Status== -1)
+            if (convertedResult.Status == -1)
+            {
+                _logger.LogInformation("Post method invocked: Invalid Currency");
+
                 return BadRequest(new ConversionResult()
                 {
                     isSuccess = false,
@@ -70,7 +73,11 @@ namespace Currency_Conversion_API.Controllers
                     message = "Invalid Currency",
                     histories = null
                 });
+            }
             if (convertedResult.Status == -2)
+            {
+                _logger.LogInformation("Post method invocked: Unable to Fetch Currency");
+
                 return Ok(new ConversionResult()
                 {
                     isSuccess = false,
@@ -78,6 +85,7 @@ namespace Currency_Conversion_API.Controllers
                     message = "Unable to Fetch Currency",
                     histories = null
                 });
+            }
 
             var historyList=currencyConverter.GetHistory(request.ToCurrencyCode);
             var histories = _mapper.Map<List<History>>(historyList);
@@ -88,6 +96,8 @@ namespace Currency_Conversion_API.Controllers
                 message ="Success",
                 histories= histories
             };
+            _logger.LogInformation("Post method invocked successfully");
+
             return Ok(result);
 
         }

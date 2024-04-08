@@ -4,7 +4,6 @@
     {
         public string FromCurrencyCode { get; set; }
         public string ToCurrencyCode { get; set; }
-
-        public double CurrencyValue { get; set; } = 0;
+        public double CurrencyValue { get; set; }
     }
 }

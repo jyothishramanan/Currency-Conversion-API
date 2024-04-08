@@ -1,4 +1,5 @@
-﻿using Currency_Conversion_Business.Helper;
+﻿using Currency_Conversion_Business.Constants;
+using Currency_Conversion_Business.Helper;
 using Currency_Conversion_Business.Interface;
 using Currency_Conversion_Business.Models;
 using Microsoft.Extensions.Configuration;
@@ -11,17 +12,16 @@ namespace Currency_Conversion_Business.BusinessLayer
     
     public class CurrencyConverter: IConverter
     {
-        private  Dictionary<string, double> _exchangeRates;
-        IConfiguration _configuration;
-        string _filename;
-        string _dataSource;
+        private Dictionary<string, double> _exchangeRates;
+        private readonly IConfiguration _configuration;
+        private readonly string _filename;
+        private readonly string _dataSource;
         public CurrencyConverter(IConfiguration configuration)
         {
             //Initialize exchange rates
             _configuration = configuration;
             _dataSource = _configuration.GetSection("DataSource").Value;
             _filename = _configuration.GetSection("Filename").Value;
-            var x=System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             UpdateCurrency();
         }
 
@@ -30,10 +30,10 @@ namespace Currency_Conversion_Business.BusinessLayer
         {
             if (!_exchangeRates.ContainsKey(toCurrency))
             {
-                throw new ArgumentException("Invalid currency");
+                throw new ArgumentException(AppConstant.INVALIDCURRENCY_MSG);
             }
             if(Double.IsNaN(_exchangeRates[toCurrency]) || _exchangeRates[toCurrency] == 0)
-                throw new ArgumentException("Unable to fetch currency rate");
+                throw new ArgumentException(AppConstant.UNABLETOFINDCURRENCY_MSG);
 
             return amount * _exchangeRates[toCurrency];
         }
@@ -53,17 +53,15 @@ namespace Currency_Conversion_Business.BusinessLayer
             }
             catch (ArgumentException ex)
             {
-                if (ex.Message == "Invalid currency")
+                if (ex.Message == AppConstant.INVALIDCURRENCY_MSG)
                 {
                     convertedResult.Status = -1;
                     convertedResult.Value = 0;
-                    Console.WriteLine(ex.Message);
                 }
-                else if (ex.Message == "Unable to fetch currency rate")
+                else if (ex.Message == AppConstant.UNABLETOFINDCURRENCY_MSG)
                 {
                     convertedResult.Status = -2;
                     convertedResult.Value = 0;
-                    Console.WriteLine(ex.Message);
                 }
 
             }
@@ -99,26 +97,7 @@ namespace Currency_Conversion_Business.BusinessLayer
             return historyModels;
         }
 
-        public Dictionary<string, double> ParseXML(string path)
-        {
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(path);
-            XmlNodeList list = xmlDoc.GetElementsByTagName("Cube");
-            Dictionary<string, double> extractedReult = new Dictionary<string, double>();
-            int x = 0;
-            foreach (XmlNode nodes in list)
-            {
-                if (x >= 2)
-                {
-                    double result = double.Parse(nodes.Attributes["rate"].Value, System.Globalization.CultureInfo.InvariantCulture);
-
-                    extractedReult.Add(nodes.Attributes["currency"].Value, result);
-
-                }
-                x++;
-            }
-            return extractedReult;
-        }
+       
 
         private List<HistoryModel> GetHistory(double days, string ToCurrency)
         {

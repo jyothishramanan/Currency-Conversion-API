@@ -10,5 +10,13 @@ namespace Currency_Conversion_Business.Models
     {
         public double Value { get; set; }   
         public int Status { get; set; }
+
+        public Status ConversionStatus { get; set; }
+    }
+    public enum Status
+    {
+        UnableToFind,
+        Invalid,
+        High
     }
 }

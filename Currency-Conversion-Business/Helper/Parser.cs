@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using Currency_Conversion_Business.Constants;
+using System.Xml;
 
 namespace Currency_Conversion_Business.Helper
 {
@@ -11,20 +12,27 @@ namespace Currency_Conversion_Business.Helper
 
             if (File.Exists(path))
             {
-
-                xmlDoc.Load(path);
-                XmlNodeList list = xmlDoc.GetElementsByTagName("Cube");
-                int x = 0;
-                foreach (XmlNode nodes in list)
+                try
                 {
-                    if (x >= 2)
+                    xmlDoc.Load(path);
+                    XmlNodeList list = xmlDoc.GetElementsByTagName(AppConstant.CUBE);
+                    int x = 0;
+                    foreach (XmlNode nodes in list)
                     {
-                        double result = double.Parse(nodes.Attributes["rate"].Value, System.Globalization.CultureInfo.InvariantCulture);
+                        //Lis conatains all cube nodes, first two cube nodes need to ignore
+                        if (x >= 2)
+                        {
+                            double result = double.Parse(nodes.Attributes[AppConstant.RATE].Value, System.Globalization.CultureInfo.InvariantCulture);
 
-                        extractedReult.Add(nodes.Attributes["currency"].Value, result);
+                            extractedReult.Add(nodes.Attributes[AppConstant.CURRENCY].Value, result);
 
+                        }
+                        x++;
                     }
-                    x++;
+                }
+                catch(Exception ex)  
+                { 
+                    
                 }
             }
             
